@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="page-full index-bg">
+
+  <main class="landing-layout">
+    <section class="landing-left">
+      <h1 class="landing-title" id="landingTitle">PROJECT TITLE</h1>
+
+      <div class="landing-description-box">
+        <p class="landing-description" id="landingDesc">GAME DESCRIPTION</p>
+      </div>
+
+      <button class="btn-pill btn-primary btn-large" onclick="window.location.href='{{ url_for('team') }}'">
+        START CHALLENGE
+      </button>
+    </section>
+
+    <section class="landing-right">
+      <div class="scanner-frame">
+        <div class="scanner-screen">
+          <img src="https://placehold.co/400x550/000000/333333?text=SKELETON" alt="Skeleton" class="scan-bg">
+          
+          <div class="scan-line"></div>
+          
+          <div class="scan-hud hud-top">
+            <span>MODALITY: PET/CT</span>
+            <span>PROT: WB-3D</span>
+          </div>
+          <div class="scan-hud hud-btm">
+            <span class="blink">ACQUIRING...</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    fetch("/data")
+      .then(r => r.json())
+      .then(d => {
+        if(d.game.title) document.getElementById("landingTitle").textContent = d.game.title;
+        if(d.game.description) document.getElementById("landingDesc").textContent = d.game.description;
+      })
+      .catch(()=>{});
+  </script>
+</body>
+</html>

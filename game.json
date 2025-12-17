@@ -1,0 +1,281 @@
+{
+  "game": {
+    "title": "Clinical Escape Room — Prostate Case",
+    "rules": {
+      "time_minutes": 25,
+      "scoring": [
+        "+10 for correct MCQ",
+        "+10 for correct drag & drop",
+        "Password stages are checkpoints (0 points)."
+      ],
+      "lifelines": [
+        "Use hints wisely.",
+        "50/50 removes two wrong options (MCQ only).",
+        "Call gives one extra hint."
+      ],
+      "fairplay": [
+        "One submission per team name.",
+        "Do not refresh to avoid losing progress."
+      ]
+    },
+    "team_members": [
+      "Omar",
+      "Claudia",
+      "Violeta",
+      "Pau",
+      "Xavi",
+      "Other"
+    ]
+  },
+  "steps": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "title": "STAGE 1",
+      "question": "What is remarkable given the clinical history, symptoms, and blood tests?",
+      "options": [
+        "PSA is high",
+        "Chest pain",
+        "Brain abnormality",
+        "Abdominal ultrasound finding"
+      ],
+      "answer": "PSA is high",
+      "explanation": "An elevated PSA is a key clue suggesting prostate pathology.",
+      "time_limit": 60,
+      "hints": {
+        "25": "Look for the abnormal marker in the labs.",
+        "50": "It’s a 3‑letter prostate marker."
+      }
+    },
+    {
+      "id": 2,
+      "type": "password",
+      "title": "STAGE 2 — CHECKPOINT",
+      "prompt": "Enter the checkpoint password (from the key marker).",
+      "password": "PSA",
+      "time_limit": 60,
+      "hints": {
+        "25": "Same keyword as the marker.",
+        "50": "Three letters, all caps."
+      }
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "title": "STAGE 3",
+      "question": "Which imaging technique would you do first to evaluate the prostate?",
+      "options": [
+        "Multiparametric MRI",
+        "Chest CT",
+        "X‑ray",
+        "Abdominal ultrasound"
+      ],
+      "answer": "Multiparametric MRI",
+      "explanation": "mpMRI is commonly first‑line for local prostate evaluation.",
+      "time_limit": 60,
+      "hints": {
+        "25": "Think of standard first anatomical assessment.",
+        "50": "It’s mp…"
+      }
+    },
+    {
+      "id": 4,
+      "type": "dragdrop",
+      "title": "STAGE 4 — MATCH THE LABELS",
+      "question": "Drag the correct label onto each image type. (1 label is a decoy 😄)",
+      "images": [
+        "IMAGE A",
+        "IMAGE B",
+        "IMAGE C"
+      ],
+      "labels": [
+        "MRI Axial T2",
+        "MRI Sagittal T2",
+        "MRI Axial DWI",
+        "CT (decoy)"
+      ],
+      "answer": {
+        "IMAGE A": "MRI Axial T2",
+        "IMAGE B": "MRI Sagittal T2",
+        "IMAGE C": "MRI Axial DWI"
+      },
+      "explanation": "T2: fluid bright; DWI: restricted diffusion appears bright with grainier background.",
+      "time_limit": 90,
+      "hints": {
+        "25": "Axial slices look like cross‑sections.",
+        "50": "DWI has a grainy background and bright focal lesions."
+      }
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "title": "STAGE 5",
+      "question": "MRI does not clearly show a lesion, but PSA remains elevated. What is the best next test to localize disease?",
+      "options": [
+        "Repeat PSA only",
+        "CT pelvis",
+        "PSMA PET/CT",
+        "Bone X‑ray"
+      ],
+      "answer": "PSMA PET/CT",
+      "explanation": "Functional PSMA PET can reveal lesions missed by anatomical imaging.",
+      "time_limit": 60,
+      "hints": {
+        "25": "Anatomical imaging may miss it.",
+        "50": "Think functional imaging targeting PSMA."
+      }
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "title": "STAGE 6",
+      "question": "Which tracer is commonly used for PSMA PET imaging?",
+      "options": [
+        "Ga‑68",
+        "I‑131",
+        "Tc‑99m MDP",
+        "F‑18 FDG (always for PSMA)"
+      ],
+      "answer": "Ga‑68",
+      "explanation": "Ga‑68 labeled PSMA ligands are widely used (among others).",
+      "time_limit": 60,
+      "hints": {
+        "25": "This is a PET radiometal.",
+        "50": "Atomic number 31."
+      }
+    },
+    {
+      "id": 7,
+      "type": "password",
+      "title": "STAGE 7 — CHECKPOINT",
+      "prompt": "Checkpoint password (the target protein).",
+      "password": "PSMA",
+      "time_limit": 60,
+      "hints": {
+        "25": "Same as the PET target.",
+        "50": "4 letters."
+      }
+    },
+    {
+      "id": 8,
+      "type": "password",
+      "title": "STAGE 8 — CHECKPOINT",
+      "prompt": "Checkpoint password (the modality).",
+      "password": "PET",
+      "time_limit": 60,
+      "hints": {
+        "25": "3 letters.",
+        "50": "Positron…"
+      }
+    },
+    {
+      "id": 9,
+      "type": "mcq",
+      "title": "STAGE 9",
+      "question": "If PSMA PET shows focal uptake in the prostate, what does it suggest?",
+      "options": [
+        "A likely malignant focus",
+        "Guaranteed benign finding",
+        "No clinical meaning",
+        "Only metastasis, not primary"
+      ],
+      "answer": "A likely malignant focus",
+      "explanation": "Focal PSMA uptake in the right context increases suspicion for malignancy.",
+      "time_limit": 60,
+      "hints": {
+        "25": "Uptake correlates with PSMA expression.",
+        "50": "Think 'suspicious focus'."
+      }
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "title": "STAGE 10",
+      "question": "What is required to confirm the diagnosis and determine tumor grade?",
+      "options": [
+        "Biopsy (histopathology)",
+        "More PSA tests only",
+        "Start radiotherapy immediately",
+        "Repeat CT monthly"
+      ],
+      "answer": "Biopsy (histopathology)",
+      "explanation": "Biopsy is the gold standard for confirmation and grading.",
+      "time_limit": 60,
+      "hints": {
+        "25": "You need tissue.",
+        "50": "Gold standard."
+      }
+    },
+    {
+      "id": 11,
+      "type": "dragdrop",
+      "title": "STAGE 11 — HISTO MATCH",
+      "question": "Match each histology image with the Gleason pattern. (1 label is incorrect 😄)",
+      "images": [
+        "IMAGE A",
+        "IMAGE B"
+      ],
+      "labels": [
+        "Gleason pattern 3",
+        "Gleason pattern 4",
+        "Gleason pattern 5 (decoy)"
+      ],
+      "answer": {
+        "IMAGE A": "Gleason pattern 4",
+        "IMAGE B": "Gleason pattern 3"
+      },
+      "explanation": "Gleason patterns reflect glandular architecture; higher pattern indicates more aggressive disease.",
+      "time_limit": 90,
+      "hints": {
+        "25": "Pattern 4 is more fused/poorly formed glands.",
+        "50": "Pattern 3 keeps separate glands."
+      }
+    },
+    {
+      "id": 12,
+      "type": "mcq",
+      "title": "STAGE 12",
+      "question": "Final diagnosis?",
+      "options": [
+        "BPH",
+        "Prostate adenocarcinoma",
+        "Prostatitis",
+        "Bladder cancer"
+      ],
+      "answer": "Prostate adenocarcinoma",
+      "explanation": "Clinical marker + functional imaging + histology support prostate adenocarcinoma.",
+      "time_limit": 60,
+      "hints": {
+        "25": "Combine PSA + PSMA PET + biopsy.",
+        "50": "Adeno…"
+      }
+    },
+    {
+      "id": 13,
+      "type": "message",
+      "title": "CONGRATULATIONS",
+      "text": "CONGRATULATIONS\n\nDiagnosis Confirmed: Prostate adenocarcinoma (Gleason 4 + 3 = 7).\n\nExcellent work, team! You successfully analysed the clinical clues, interpreted multiple imaging modalities, and confirmed the diagnosis through histopathology.\n\nKey insights:\n• Elevated PSA and negative MRI/CT can still indicate cancer — functional imaging like PSMA PET can reveal what anatomical scans miss.\n• Biopsy remains the gold standard for confirming the diagnosis and grading tumor aggressiveness.\n• The Gleason score provides essential information about how differentiated and aggressive the tumor is.\n\nNext step:\nPrepare to discuss treatment strategies — weighing the benefits and side effects of different approaches to personalize patient care."
+    },
+    {
+      "id": 14,
+      "type": "textbox",
+      "title": "STAGE 13 — YOUR OPINION",
+      "prompt": "As a team, write your opinion: what was the most important clue and why?"
+    },
+    {
+      "id": 15,
+      "type": "mcq",
+      "title": "STAGE 14",
+      "question": "Which statement is correct?",
+      "options": [
+        "A negative MRI rules out prostate cancer completely",
+        "PSMA PET can detect lesions missed by anatomical imaging",
+        "Biopsy is optional if PSA is high",
+        "Gleason score is unrelated to aggressiveness"
+      ],
+      "answer": "PSMA PET can detect lesions missed by anatomical imaging",
+      "explanation": "Functional imaging can reveal disease that anatomical scans may miss; biopsy confirms and Gleason grades.",
+      "time_limit": 60
+    }
+  ]
+}

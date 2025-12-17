@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="game-page">
+
+  <canvas id="fireworksCanvas"></canvas>
+
+  <header class="hud">
+    <div class="hud-box" id="hudScore">SCORE: 0</div>
+    <div class="hud-box" id="hudTime">TIME: 00:00:00</div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+  </div>
+
+  <main class="game-wrap">
+    <div class="team-banner" id="teamBanner">TEAM: ...</div>
+
+    <section id="questionView">
+      <section class="card big-card">
+        
+        <div class="lifelines">
+          <button class="life-btn" id="lifeHint" title="Hints">?</button>
+          <button class="life-btn" id="life5050" title="50/50">50/50</button>
+          <button class="life-btn" id="lifeCall" title="Call Doctor">📞</button>
+        </div>
+
+        <h1 class="big-title" id="stepTitle">TITLE</h1>
+
+        <div class="question-body" id="stepQuestion"></div>
+
+        <div class="dragdrop hidden" id="ddWrap">
+          <div class="dd-grid" id="ddGrid"></div>
+          <div class="dd-labels" id="ddLabels"></div>
+          <div class="dd-actions">
+            <button class="btn-pill btn-primary" id="ddSubmit">SUBMIT</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="options-row" id="optionsRow"></section>
+
+      <section id="explainBar" class="explain-bar hidden">
+        <div id="explainText" class="explain-inner"></div>
+      </section>
+
+      <section class="nav-row">
+        <button class="btn-rect" id="btnBack">BACK</button>
+        <button class="btn-rect hidden" id="btnNext">NEXT STAGE</button>
+      </section>
+    </section>
+
+    <section id="finalView" class="hidden">
+      <section class="card big-card final-card" id="certificateArea">
+        <div class="trophy">🏆</div>
+        <h1 class="big-title">CONGRATULATIONS!</h1>
+        <div class="final-sub">You have mastered the pathway.</div>
+
+        <div class="final-team-section">
+          <div class="final-team-icon">🏥</div>
+          <h2 class="final-team-name" id="finalTeamName">TEAM NAME</h2>
+          <div class="final-members-list" id="finalMembers"></div>
+        </div>
+
+        <div class="final-stats">
+          <div class="final-stat"><span class="final-k">FINAL SCORE</span><span class="final-v" id="finalScore">0</span></div>
+          <div class="final-stat"><span class="final-k">TIME SPENT</span><span class="final-v" id="finalTime">00:00:00</span></div>
+        </div>
+
+        <div class="podium-container" id="podiumBox">
+          </div>
+
+        <div class="nav-row no-print" style="justify-content:center; flex-wrap:wrap; gap:20px;">
+          <button class="btn-pill btn-primary" id="btnCertificate">DOWNLOAD CERTIFICATE</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="modal hidden" id="hintModal">
+    <div class="modal-card card">
+      <button class="modal-close" id="hintClose">X</button>
+      <h2 class="modal-title">HINTS</h2>
+      <div id="hintUnlockView">
+        <div class="hint-grid">
+          <button class="hint-tile" id="hint25"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">20 POINTS</div></button>
+          <button class="hint-tile" id="hint50"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">25 POINTS</div></button>
+        </div>
+        <div class="hint-meta">Remaining hints: <span id="hintRemaining">4</span></div>
+      </div>
+      <div id="hintTextView" class="hidden">
+        <div class="hint-present"><div class="hint-present-text" id="hintPresentedText">...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="callModal">
+    <div class="modal-card card">
+      <button class="modal-close" id="callClose">X</button>
+      <h2 class="modal-title">CALL DOCTOR KAI</h2>
+      <div class="call-body"><p><b>Use this once.</b> Call Doctor KAI for help</p></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="resultModal">
+    <div class="modal-card card result-card">
+      <div class="result-title" id="resultTitle">RESULT</div>
+      <div class="result-body" id="resultBody"></div>
+      <button class="btn-pill btn-primary" id="resultContinue">CONTINUE</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="successModal">
+    <div class="modal-card card ataboy-card">
+      <div class="ataboy-big" id="successTitle">CORRECT!</div>
+      <div class="ataboy-small" id="successBody">Well done</div>
+      <div style="margin-top:24px;">
+        <button class="btn-pill btn-primary" id="successNext">CONTINUE TO NEXT STAGE</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading next stage...</div>
+  </div>
+
+  <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+</html>

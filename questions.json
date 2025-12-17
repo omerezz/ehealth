@@ -1,0 +1,216 @@
+{
+  "game": {
+    "title": "Pixels to Prognosis: An Imaging-Based Escape Room",
+    "description": "This activity challenges students to apply clinical reasoning by analyzing and interpreting findings from multiple imaging modalities — from anatomical to molecular techniques — and making evidence-based decisions about diagnosis and treatment in a collaborative, escape-room style investigation.",
+    "initial_score": 1000,
+    "timer_seconds": 1800,
+    "max_hints_total": 4,
+    "team_members": [
+      "Biel",
+      "Violeta",
+      "Monica",
+      "Lorena",
+      "Guillem",
+      "Samuel",
+      "Mariam",
+      "David",
+      "Ashwini",
+      "Laia",
+      "Danial",
+      "Olga",
+      "Sabrina",
+      "Hassaan",
+      "Maria"
+    ],
+    "rules": {
+      "time_minutes": 30,
+      "scoring": [
+        "MCQ: 2 attempts maximum. -10 pts per wrong attemp. Reveal answer on 2nd fail.",
+        "Password: 2 attempts maxumim. -10 pts wrong attemp. Reveal password on 2nd fail.",
+        "Drag & Drop: 2 attempts. Reset on 1st fail, Auto-solve on 2nd.",
+        "Hints cost points. 50/50 & Call Doctor used ONCE per game."
+      ],
+      "lifelines": ["Hints: 4 total (cost varies)", "50/50: Once total", "Call Doctor: Once total"],
+      "fairplay": ["No external internet allowed.", "Team collaboration is essential."]
+    }
+  },
+  "steps": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "title": "STAGE 1",
+      "question": "Clinical history of the patient \nAge: 55 years\nGender: Male\nHistory: Mild lower urinary tract symptoms (frequency, nocturia, weak stream). No hematuria.\nFamily history: Brother with prostate cancer at age 72.\nPhysical exam: Digital rectal exam (DRE) unremarkable.\n\nImagine that you’re a doctor, what would you do if a patient came to the hospital with these symptoms?",
+      "options": ["CT Scan", "Blood Test", "Nothing Everything is Fine", "Biopsy"],
+      "answer": "Blood Test",
+      "hints": {
+        "20": "----",
+        "25": "----"
+      }
+    },
+    {
+      "id": 2,
+      "type": "password",
+      "title": "STAGE 2",
+      "question": "What is remarkable here given the clinical history of this patient, his symptoms, and theblood test?",
+      "pdf_link": "/static/materials/patient_record.pdf",
+      "password": "PSA",
+      "hints": {
+        "20": "If you read carefully, something doesn’t match as a normal exam; a marker is high.",
+        "25": "Find the 3-letter test that raised suspicion."
+      }
+    },
+    {
+      "id": 3,
+      "type": "mcq",
+      "title": "STAGE 3",
+      "question": "Which medical imaging technique would you do first?",
+      "options": ["CT Scan", "Ultrasound", "MRI", "Nuclear Medicine"],
+      "answer": " MRI",
+      "hints": {
+        "20": "----",
+        "25": "----"
+      }
+    },
+    {
+      "id": 4,
+      "type": "dragdrop",
+      "title": "STAGE 4",
+      "question": "Drag the correct label to the corresponding image.",
+      "images": ["1.jpg", "2.jpg", "3.jpg"],
+      "labels": ["MRI Axial T2", "Axial DWI", "Sagittal T2", "Bladder Base"],
+      "answer": {
+        "s4_img1.jpg": "MRI Axial T2",
+        "s4_img2.jpg": "Sagittal T2",
+        "s4_img3.jpg": "Axial DWI"
+      },
+      "hints": {
+        "20": "Look at the direction of the slices. if you can see both hips or the cross-sectionof the bladder, you’re looking across the body; if you see the spine and pubic symphysisin profile, the image was taken from the side.",
+        "25": "Notice the contrast and texture of the image — in T2-weighted images, fluids appear bright, while in DWI (diffusion-weighted imaging), thebackground looks grainier."
+      }
+    },
+    {
+      "id": 5,
+      "type": "mcq",
+      "title": "STAGE 5",
+      "question": "Now that you have the modalities of each image, watch the scan animation. What are you seeing? Can you let us know where the lesion is?",
+      "media_type": "gif",
+      "image": "s5_scan.gif",
+      "options": [" We don’t see clearly a lesion, we should ask for additional tests", "We clearly see a lesion.", "It's in the bottom", "It's in the right side"],
+      "answer": " We don’t see clearly a lesion, we should ask for additional tests",
+      "hints": {
+        "20": "Despite having an adenoma on the right side, that’s not the lesion.",
+        "25": "In DWI, lesions stand out as bright focal spots."
+      }
+    },
+    {
+      "id": 6,
+      "type": "mcq",
+      "title": "STAGE 6",
+      "question": "T2-MRI and DWI-MRI scans did not show the lesion clearly, but the patient’s PSAremains elevated. Which test would be the most appropriate to better detect andlocalize the lesion?",
+      "options": ["CT scan", "Second blood tests- to recheck PSA since no lesion was seen", "Biopsy", "Prostate Specific Membrane Antigen (PSMA) PET scan (a molecular imagingstudy using a radiotracer)"],
+      "answer": "Prostate Specific Membrane Antigen (PSMA) PET scan (a molecular imagingstudy using a radiotracer)",
+      "hints": {
+        "20": "So far, anatomical imaging hasn’t shown the problem. Maybe it’s time to look athow the cells function rather than just how the organs look.",
+        "25": "This test uses a radioactive tracer that binds to a protein highly expressed oncancer cells — it helps “light up” what MRI can’t visualize."
+      }
+    },
+    {
+      "id": 7,
+      "type": "password",
+      "title": "STAGE 7",
+      "question": "Select which is the correct radionuclide used for this PSMA PET scan.",
+      "image": "s7_clue.jpg",
+      "password": "Ga-68",
+      "hints": {
+        "25": "Think about what kind of imaging technique you’re using. This one detects positrons, not gamma rays",
+        "50": "The most common radiometal used for labeling PSMA ligands has an atomicnumber of 31 + 37. This radionuclide is produced in a generator and is known for itsshort half-life of about 68 minutes, making it ideal for quick PET imaging studies."
+      }
+    },
+    {
+      "id": 8,
+      "type": "mcq",
+      "title": "STAGE 8",
+      "question": "Now that you have localized the suspicious lesion, what should be the next step toconfirm diagnosis and guide targeted treatment for this patient?",
+      "options": ["Biopsy","Directly performing surgery","Repeat blood tests to confirm PSA elevation and schedule follow-up","Start radiotherapy immediately"],
+      "answer": "Biopsy",
+      "hints": {
+        "25": "Imaging reveals the location, but to choose the right therapy we need to know what kind of cells are there. Benign, malignant, or something else.",
+        "50": "Before any definitive treatment, oncologists always request a procedure thatallows microscopic examination of tissue. The gold standard for confirming adiagnosis."
+      }
+    },
+    {
+      "id": 9,
+      "type": "mcq",
+      "title": "STAGE 9",
+      "question":"Which one of these medical imaging techniques is not typically used to perform orguide a biopsy?",
+      "options":["CT Scan", "MRI", "PET-PSMA", "Ultrasound"],
+      "answer":"PET-PSMA",
+      "hints":{
+        "20": "Think about which technique provides real-time anatomical guidance for needleplacement — not just metabolic information.",
+        "25": "This modality shows functional uptake rather than clear structural detail, so ithelps identify where to biopsy, but not how to guide the needle there."
+      }
+
+    },
+    {
+      "id": 10,
+      "type": "mcq",
+      "title": "STAGE 10",
+      "question": "Which of the following scoring systems is used to grade the biopsy and diagnoseprostate cancer?",
+      "options": ["Gleason score","PI-RADS","BI-RADS","Lugano classification"],
+      "answer": "Gleason score",
+      "hints": {
+        "20": "The MRI helped locate the lesion, but now you’re looking at cellular architectureunder the microscope — this system classifies patterns of prostate tissue.",
+        "25": "This scoring method adds together two numbers (from 3 to 5) representing themost common and second-most common tumor patterns. A higher total means a moreaggressive cancer."
+      }
+    },
+    {
+      "id": 11,
+      "type": "mcq",
+      "title": "STAGE 11",
+      "question": "Based on the pathological images and the histology report provided, select thecorrect Gleason score for this prostate biopsy. (Remember: you have access to thepathology tables and previous clinical data.)",
+      "options": ["Gleason 3 + 3","Gleason 4 + 3","Gleason 3 + 4","Gleason 5 + 5"],
+      "answer": "Gleason 4 + 3",
+      "hints": {
+        "20": "Look carefully at the glandular architecture in this biopsy, the predominantpattern shows fused or poorly formed glands rather than well-defined circular ones.The secondary pattern still retains some recognizable gland structure.",
+        "25": " The final score combines the most common and second most commonhistologic patterns. When the higher number comes first, it means the more aggressivepattern predominates"
+      }
+    },
+    {
+      "id": 12,
+      "type": "mcq",
+      "title": "STAGE 12",
+      "question": "Based on the patient’s history, imaging results and biopsy findings, what is themost likely diagnosis?",
+      "options": ["Benign Prostatic Hyperplasia (BPH)", "Acute Prostatitis", "Prostate Adenocarcinoma with Metastatic Disease", "Bladder Carcinoma"],
+      "answer": "Prostate Adenocarcinoma with Metastatic Disease",
+      "hints": {
+        "20": "The imaging results show focal uptake in the prostate and distant metastasesinvolving lymph nodes and bone.",
+        "25": "The biopsy confirmed adenocarcinoma, and the disease shows androgen-dependent progression."
+      }
+    },
+    {
+      "id": 1201,
+      "type": "info",
+      "title": "CONGRATULATIONS",
+      "text": "Diagnosis Confirmed: Prostate adenocarcinoma (Gleason 4 + 3 = 7).Excellent work, team! You successfully analysed the clinical clues, interpreted multipleimaging modalities, and confirmed the diagnosis through histopathologyKey insights:• Elevated PSA and negative MRI/CT can still indicate cancer — functional imaging likePSMA PET can reveal what anatomical scans miss.• Biopsy remains the gold standard for confirming the diagnosis and grading tumoraggressiveness.• The Gleason score provides essential information about how differentiated andaggressive the tumor is.Next step:Prepare to discuss treatment strategies — weighing the benefits and side effects ofdifferent approaches to personalize patient care."
+    },
+    {
+      "id": 13,
+      "type": "textbox",
+      "title": "STAGE 13",
+      "question": "The patient has been diagnosed with prostate adenocarcinoma confirmed by biopsy.Considering the possible treatment approaches and their side effects, whichmanagement strategy would be the most appropriate to discuss with this patient?",
+      "placeholder": "Type your reflection here"
+    },
+    {
+      "id": 14,
+      "type": "mcq",
+      "title": "STAGE 14: Bonus Knowledge",
+      "question": "Which gene mutation, if present, would make a prostate cancer patient eligible for PARP inhibitors?",
+      "options": ["BRCA1/2", "KRAS", "EGFR", "ALK"],
+      "answer": "BRCA1/2",
+      "hints": {
+        "25": "It's a DNA damage repair gene, famous in breast cancer too.",
+        "50": "Angelina Jolie famously had this mutation."
+      }
+    }
+  ]
+}

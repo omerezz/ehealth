@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="game-page">
+
+  <main class="game-wrap">
+    <section class="card big-card team-card">
+      <h1 class="big-title">TEAM SETUP</h1>
+
+      <div class="form-grid">
+        <div class="form-block">
+          <label class="form-label">Team name</label>
+          <input class="form-input" id="teamName" placeholder="e.g., Isotope Squad"/>
+          <div class="form-help">Choose up to <b>5</b> members (can be less).</div>
+        </div>
+
+        <div class="form-block">
+          <div class="form-row">
+            <label class="form-label">Select members</label>
+            <div class="form-counter"><span id="countSel">0</span>/5</div>
+          </div>
+          <div class="members-grid" id="membersGrid"></div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-rect" onclick="window.location.href='/'">BACK</button>
+        <button class="btn-rect" id="teamSubmit">SUBMIT</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const membersGrid = document.getElementById("membersGrid");
+    const teamSubmit = document.getElementById("teamSubmit");
+    const teamName = document.getElementById("teamName");
+    const countSel = document.getElementById("countSel");
+
+    let members = [];
+    let selected = new Set();
+
+    function updateCounter(){ countSel.textContent = String(selected.size); }
+
+    function renderMembers(){
+      membersGrid.innerHTML = "";
+      members.forEach(name => {
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "member-tile";
+        tile.innerHTML = `
+          <div class="member-name" title="${name}">${name}</div>
+          <div class="member-check">${selected.has(name) ? "✓" : ""}</div>
+        `;
+
+        if (selected.has(name)) tile.classList.add("selected");
+
+        tile.addEventListener("click", () => {
+          if (selected.has(name)) selected.delete(name);
+          else {
+            if (selected.size >= 5) { alert("Max 5 members per team."); return; }
+            selected.add(name);
+          }
+          updateCounter();
+          renderMembers();
+        });
+
+        membersGrid.appendChild(tile);
+      });
+    }
+
+    fetch("/data").then(r=>r.json()).then(d=>{
+      members = d?.game?.team_members || [];
+      renderMembers();
+      updateCounter();
+    });
+
+    teamSubmit.addEventListener("click", () => {
+      const name = (teamName.value || "").trim();
+      if (!name) return alert("Please enter a team name.");
+      if (selected.size === 0) return alert("Select at least 1 member.");
+
+      localStorage.setItem("team_name", name);
+      localStorage.setItem("team_members", JSON.stringify([...selected]));
+      localStorage.setItem("rules_accepted", "false");
+
+      window.location.href = "/rules";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rules</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="game-page">
+
+  <main class="game-wrap">
+    <div class="team-banner" id="teamBanner">TEAM: ...</div>
+
+    <section class="card big-card rules-card">
+      <h1 class="big-title">GAME RULES</h1>
+
+      <div class="rules-box" id="rulesBox"></div>
+
+      <div class="agree-row">
+        <label class="agree-label">
+          <input type="checkbox" id="agreeCheck" />
+          I read the rules and agree (for fun 😄)
+        </label>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-rect" onclick="window.location.href='/team'">BACK</button>
+        <button class="btn-rect" id="startGame" disabled>START</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const rulesBox = document.getElementById("rulesBox");
+    const agreeCheck = document.getElementById("agreeCheck");
+    const startGame = document.getElementById("startGame");
+    const teamName = localStorage.getItem("team_name");
+
+    if (!teamName) window.location.href = "/team";
+    document.getElementById("teamBanner").textContent = `TEAM: ${teamName}`;
+
+    fetch("/data").then(r=>r.json()).then(d=>{
+      const rules = d?.game?.rules;
+      if (!rules) return;
+
+      const html = [];
+      html.push(`<div class="rules-section"><div class="rules-title">Time</div><div>${rules.time_minutes} minutes</div></div>`);
+      html.push(`<div class="rules-section"><div class="rules-title">Scoring</div><ul>${(rules.scoring||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
+      html.push(`<div class="rules-section"><div class="rules-title">Lifelines</div><ul>${(rules.lifelines||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
+      html.push(`<div class="rules-section"><div class="rules-title">Fair play</div><ul>${(rules.fairplay||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
+      rulesBox.innerHTML = html.join("");
+    });
+
+    agreeCheck.addEventListener("change", () => startGame.disabled = !agreeCheck.checked);
+
+    startGame.addEventListener("click", () => {
+      localStorage.setItem("rules_accepted", "true");
+      window.location.href = "/game";
+    });
+  </script>
+</body>
+</html>
