@@ -383,9 +383,29 @@ body.page-game {
 .hint-tile-bottom { font-size: 28px; font-weight: 900; color: var(--primary2); }
 .hint-present { border: 1px solid var(--stroke); background: var(--panel2); border-radius: 16px; box-shadow: var(--shadow); padding: 42px 26px; margin: 0 18px; min-height: 240px; display: flex; align-items: center; justify-content: center; }
 .hint-present-text { font-size: 28px; font-weight: 900; color: rgba(0, 95, 125, .95); text-align: center; }
-.result-card { max-width: 720px; }
-.result-title { font-size: 44px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-.result-body { font-weight: 700; color: var(--muted); margin: 10px auto 18px; max-width: 560px; line-height: 1.65; white-space: pre-line; }
+/* REPLACE THESE CLASSES IN style.css */
+
+.result-card {
+  max-width: 560px;       /* Changed from 720px to match Success Card */
+  text-align: center;
+}
+
+.result-title {
+  font-size: 52px;        /* Increased size to match Success Title */
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: var(--danger);   /* RED COLOR */
+}
+
+.result-body {
+  font-weight: 800;       /* Thicker font to match Success Body */
+  font-size: 18px;
+  color: var(--muted);
+  margin: 8px auto 24px;  /* Adjusted spacing */
+  line-height: 1.5;
+  white-space: pre-line;
+}
 
 /* Info & Textbox */
 .info-card-wrap { text-align: left; background: #ffffff; border: 1px solid rgba(43, 108, 255, .2); border-left: 6px solid var(--primary2); border-radius: 12px; padding: 36px 42px; box-shadow: var(--shadow2); font-size: 19px; line-height: 1.8; color: var(--text); white-space: pre-line; }
@@ -431,3 +451,109 @@ body.page-game {
   .big-title { color: #000; margin-top: 0; }
   .final-team-name, .final-members-list { color: #000; }
 }
+
+/* ... [KEEP ALL PREVIOUS CSS from the last response, then ADD/ENSURE these rules styles are present] ... */
+
+/* ===========================
+   RULES PAGE STYLES
+   =========================== */
+.rules-card {
+  max-width: 900px !important;
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.rules-card-item {
+  background: var(--panel2);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  transition: transform 0.2s;
+}
+.rules-card-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary2);
+}
+
+.rules-header {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--primary2);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rules-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.rules-list {
+  padding-left: 18px;
+  margin: 0;
+}
+.rules-list li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Agreement Checkbox */
+.agree-row {
+  margin-top: 30px;
+  text-align: center;
+}
+.agree-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.agree-label input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary2);
+}
+
+/* ... [KEEP ALL PREVIOUS CSS] ... */
+
+/* GIF Styles */
+.gif-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.step-gif {
+  max-width: 300px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow2);
+  object-fit: cover;
+}
+
+/* ... [KEEP REST OF CSS] ... */
+

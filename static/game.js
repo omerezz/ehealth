@@ -1,8 +1,11 @@
 let GAME = null;
 
+// =========================
+// State
+// =========================
 const state = {
-  activeIndex: 0,
-  viewIndex: 0,
+  activeIndex: 0, // The furthest unlocked stage
+  viewIndex: 0,   // The stage currently being displayed
   score: 0,
   hintsUsedTotal: 0,
   hintsUnlockedIds: [],
@@ -13,9 +16,13 @@ const state = {
   pendingAction: null,
   view: "question",
   globalUsedCall: false,
-  globalUsed5050: false
+  globalUsed5050: false,
+  stackIndexes: {} 
 };
 
+// =========================
+// DOM Elements
+// =========================
 const $ = (id) => document.getElementById(id);
 const el = {
   hudScore: () => $("hudScore"),
@@ -48,13 +55,16 @@ const el = {
   successNext: () => $("successNext"),
   
   btnNext: () => $("btnNext"),
-  progressBar: () => $("progressBar"), // NEW
+  progressBar: () => $("progressBar"),
   
   finalScore: () => $("finalScore"),
   finalTime: () => $("finalTime"),
   btnCertificate: () => $("btnCertificate")
 };
 
+// =========================
+// Helpers
+// =========================
 function getStep(i) { return GAME.steps[i]; }
 function ensurePerStep(i) {
   if (!state.perStep[i]) {
@@ -110,7 +120,10 @@ function lifelinesAllowed(stepType) {
 }
 
 function updateLifelineButtons() {
-  const i = state.activeIndex;
+  const i = state.viewIndex; // Only allow lifelines for current view if active?
+  // Ideally only allow usage if viewing the active frontier.
+  const isFrontier = (state.viewIndex === state.activeIndex);
+  
   const step = getStep(i);
   const ps = ensurePerStep(i);
   const allow = lifelinesAllowed(step.type);
@@ -119,6 +132,14 @@ function updateLifelineButtons() {
   el.lifeHint().classList.toggle("hidden", !allow.hint);
   el.life5050().classList.toggle("hidden", !allow.fifty);
   el.lifeCall().classList.toggle("hidden", !allow.call);
+
+  // Disable lifelines if browsing history
+  if (!isFrontier || ps.completed) {
+      el.lifeHint().disabled = true;
+      el.life5050().disabled = true;
+      el.lifeCall().disabled = true;
+      return;
+  }
 
   const hintsEmpty = hintsLeft <= 0;
   el.lifeHint().disabled = hintsEmpty;
@@ -139,9 +160,10 @@ function renderCurrent() {
   const ps = ensurePerStep(i);
   const locked = (state.viewIndex < state.activeIndex) || ps.completed;
 
-  // Update Progress Bar
-  const pct = ((state.activeIndex + 1) / GAME.steps.length) * 100;
-  el.progressBar().style.width = `${pct}%`;
+  // Update Progress Bar (Based on activeIndex to show real progress, or viewIndex?)
+  // Let's show progress based on Active Index (real progress)
+  const pct = ((state.activeIndex) / GAME.steps.length) * 100;
+  if(el.progressBar()) el.progressBar().style.width = `${pct}%`;
 
   el.optionsRow().className = "options-row"; 
   el.stepTitle().textContent = step.title;
@@ -158,14 +180,41 @@ function renderCurrent() {
   else if (step.type === 'textbox') renderTextbox(step, ps, locked);
   else if (step.type === 'info') renderInfo(step, ps);
 
-  $("btnBack").disabled = (state.viewIndex === 0);
+  // === NAVIGATION LOGIC (THE FIX) ===
   
-  if (ps.completed) {
-      el.btnNext().classList.remove("hidden");
-      el.btnNext().onclick = advanceLevel;
-  } else {
-      el.btnNext().classList.add("hidden");
-      el.btnNext().onclick = null;
+  // 1. Back Button: Always allowed unless at start
+  $("btnBack").disabled = (state.viewIndex === 0);
+  $("btnBack").onclick = () => {
+      state.viewIndex = Math.max(0, state.viewIndex - 1);
+      renderCurrent();
+  };
+  
+  // 2. Next Button Logic
+  const btn = el.btnNext();
+  
+  // Scenario A: We are browsing history (viewIndex < activeIndex)
+  if (state.viewIndex < state.activeIndex) {
+      btn.classList.remove("hidden");
+      btn.textContent = "NEXT";
+      // Remove pulse animation for simple nav
+      btn.style.animation = "none"; 
+      btn.onclick = () => {
+          state.viewIndex = Math.min(state.activeIndex, state.viewIndex + 1);
+          renderCurrent();
+      };
+  }
+  // Scenario B: We are at the frontier (viewIndex == activeIndex)
+  else {
+      // Only show if completed
+      if (ps.completed) {
+          btn.classList.remove("hidden");
+          btn.textContent = "NEXT STAGE";
+          btn.style.animation = ""; // Restore CSS pulse
+          btn.onclick = advanceLevel;
+      } else {
+          btn.classList.add("hidden");
+          btn.onclick = null;
+      }
   }
 }
 
@@ -175,19 +224,55 @@ function clearInputs() {
   el.explainBar().classList.add("hidden");
 }
 
+// --- RENDERERS ---
+
+
 function renderMCQ(step, ps, locked) {
   el.stepQuestion().textContent = step.question;
 
-  // NEW: GIF Logic
-  if (step.media_type === 'gif' && step.image) {
+  // --- MEDIA DISPLAY LOGIC ---
+
+  // 1. Handle GIFs (Single or Multiple)
+  if (step.media_type === 'gif') {
+      const container = document.createElement("div");
+      container.className = "gif-row"; 
+      
+      // Determine if we have a list of GIFs or just one (support 'gif' array or 'image' string)
+      let files = [];
+      if (Array.isArray(step.gif)) files = step.gif;
+      else if (typeof step.gif === 'string') files = [step.gif];
+      else if (step.image) files = [step.image];
+
+      files.forEach(filename => {
+          const img = document.createElement("img");
+          img.src = `/static/images/${filename}`;
+          img.className = "step-gif";
+          img.onerror = function() { this.style.display='none'; };
+          container.appendChild(img);
+      });
+      el.stepQuestion().appendChild(document.createElement("br"));
+      el.stepQuestion().appendChild(container);
+  }
+
+  // 2. Handle Image Stacks (Legacy)
+  else if (step.media_type === 'image_stacks' && step.stack_data) {
+      renderImageStacks(step.stack_data);
+  }
+
+  // 3. Handle Standard Static Image (THE FIX for Stage 10)
+  else if (step.image) {
       const img = document.createElement("img");
       img.src = `/static/images/${step.image}`;
       img.className = "step-image";
-      img.style.maxWidth = "400px";
-      el.stepQuestion().appendChild(document.createElement("br"));
+      // Styling to ensure it looks good
+      img.style.display = "block";
+      img.style.margin = "20px auto";
+      img.style.maxWidth = "100%";
+      img.onerror = function() { this.style.display='none'; };
       el.stepQuestion().appendChild(img);
   }
 
+  // --- RENDER OPTIONS ---
   step.options.forEach(opt => {
     const btn = document.createElement("button");
     btn.className = "option-btn";
@@ -205,6 +290,77 @@ function renderMCQ(step, ps, locked) {
     }
     el.optionsRow().appendChild(btn);
   });
+}
+
+function renderImageStacks(stacks) {
+    const container = document.createElement('div');
+    container.className = "image-stacks-container";
+    const stackIdBase = `s_${state.activeIndex}_`;
+    stacks.forEach((stackFiles, stackIdx) => {
+        const uId = stackIdBase + stackIdx;
+        state.stackIndexes[uId] = state.stackIndexes[uId] || 0;
+        const col = document.createElement('div');
+        col.className = "stack-col";
+        const titles = ["T2 Weighted", "DWI", "ADC Map"];
+        col.innerHTML = `<div class="stack-header">${titles[stackIdx] || "Series " + (stackIdx+1)}</div>`;
+        const viewer = document.createElement('div');
+        viewer.className = "stack-viewer";
+        const img = document.createElement('img');
+        img.src = `/static/images/${stackFiles[state.stackIndexes[uId]]}`;
+        img.draggable = false;
+        const overlay = document.createElement('div');
+        overlay.className = "stack-overlay";
+        overlay.textContent = `IMG ${state.stackIndexes[uId] + 1} / ${stackFiles.length}`;
+        const scrollTrack = document.createElement('div');
+        scrollTrack.className = "stack-scrollbar";
+        const scrollThumb = document.createElement('div');
+        scrollThumb.className = "stack-thumb";
+        const thumbH = Math.max(10, 100 / stackFiles.length); 
+        scrollThumb.style.height = `${thumbH}%`;
+        const updateThumb = () => {
+             const pct = (state.stackIndexes[uId] / (stackFiles.length - 1)) * (100 - thumbH);
+             scrollThumb.style.top = `${pct}%`;
+        };
+        updateThumb();
+        scrollTrack.appendChild(scrollThumb);
+
+        const updateImage = (newIdx) => {
+            if (newIdx < 0) newIdx = 0;
+            if (newIdx >= stackFiles.length) newIdx = stackFiles.length - 1;
+            state.stackIndexes[uId] = newIdx;
+            img.src = `/static/images/${stackFiles[newIdx]}`;
+            overlay.textContent = `IMG ${newIdx + 1} / ${stackFiles.length}`;
+            updateThumb();
+        };
+        viewer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const dir = e.deltaY > 0 ? 1 : -1;
+            updateImage(state.stackIndexes[uId] + dir);
+        });
+        let isDragging = false;
+        let startY = 0;
+        let startIndex = 0;
+        viewer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startY = e.clientY;
+            startIndex = state.stackIndexes[uId];
+            viewer.style.cursor = 'grabbing';
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; viewer.style.cursor = 'ns-resize'; });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const deltaY = e.clientY - startY;
+            const steps = Math.floor(deltaY / 10);
+            updateImage(startIndex + steps);
+        });
+        viewer.appendChild(img);
+        viewer.appendChild(overlay);
+        viewer.appendChild(scrollTrack);
+        col.appendChild(viewer);
+        container.appendChild(col);
+    });
+    el.stepQuestion().insertAdjacentElement('afterbegin', container);
 }
 
 function renderPassword(step, ps, locked) {
@@ -294,10 +450,29 @@ function renderTextbox(step, ps, locked) {
   btn.disabled = locked;
   
   btn.onclick = () => {
-    if(!ps.textValue.trim()) return alert("Please write something.");
-    ps.completed = true;
-    launchFireworks();
-    showSuccessModal("OPINION SAVED", "Thank you for participating.");
+    const txt = ps.textValue.trim();
+    if(!txt) return alert("Please write something.");
+    
+    btn.disabled = true;
+    btn.textContent = "SAVING...";
+    const team = localStorage.getItem("team_name") || "Unknown";
+    
+    fetch('/submit_opinion', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ team: team, text: txt })
+    })
+    .then(r => r.json())
+    .then(data => {
+        ps.completed = true;
+        launchFireworks();
+        showSuccessModal("OPINION SAVED", "Thank you for participating.");
+    })
+    .catch(err => {
+        alert("Error saving. Try again.");
+        btn.disabled = false;
+        btn.textContent = "SUBMIT OPINION";
+    });
   };
   
   el.optionsRow().appendChild(area);
@@ -307,13 +482,32 @@ function renderTextbox(step, ps, locked) {
 function renderInfo(step, ps) {
   el.stepQuestion().innerHTML = ""; 
   el.optionsRow().className = "options-row single-col"; 
+  
   const textContainer = document.createElement("div");
   textContainer.className = "info-card-wrap";
+  
+  // 1. Render Image if it exists (THE FIX)
+  if (step.image) {
+      const img = document.createElement("img");
+      img.src = `/static/images/${step.image}`;
+      img.className = "step-image";
+      // Add a little bottom margin to separate it from the text
+      img.style.marginBottom = "20px";
+      img.onerror = function() { this.style.display='none'; };
+      textContainer.appendChild(img);
+  }
+
+  // 2. Render Text
   let content = step.text;
   if (content.includes("Diagnosis Confirmed")) {
       content = content.replace("Diagnosis Confirmed", "<strong style='font-size:24px; color:#2b6cff; display:block; margin-bottom:10px;'>DIAGNOSIS CONFIRMED</strong>");
   }
-  textContainer.innerHTML = content.replace(/\n/g, "<br>");
+  
+  // Append text to the container
+  const textDiv = document.createElement("div");
+  textDiv.innerHTML = content.replace(/\n/g, "<br>");
+  textContainer.appendChild(textDiv);
+
   el.stepQuestion().appendChild(textContainer);
 
   const btn = document.createElement("button");
@@ -397,8 +591,8 @@ function handleDragSubmit(step, ps) {
     addScore(-15);
     if (ps.attempts >= 2) {
       ps.completed = true;
-      ps.ddAssign = step.answer;
-      showResultModal("FAILED", "Incorrect placement.\n-15 Points.\nLabels corrected automatically.", false);
+      ps.ddAssign = step.answer; // Auto Solve
+      showResultModal("FAILED", "Incorrect placement.\n-15 Points.\nLabels corrected automatically.", true);
     } else {
       ps.ddAssign = {}; 
       showResultModal("WRONG", "Incorrect placement.\n-15 Points.\nLabels reset. Try again.", false);
@@ -435,6 +629,14 @@ function showSuccessModal(title="CORRECT!", body="Well done.") {
   el.successNext().onclick = () => {
     $("successModal").classList.add("hidden");
     resumeTimer();
+    
+    // Auto-advance is called here only if the modal "CONTINUE" is clicked.
+    // BUT our requirement is manual pacing. 
+    // In "showResultModal", we just close and let user click Main Next.
+    // In "showSuccessModal", we currently advanceLevel(). 
+    // If you want STRICT manual pacing even after success, change advanceLevel() to renderCurrent().
+    // However, the "Success" modal usually implies "Moving on".
+    // I will leave advanceLevel() here as it feels more natural for a "Success" popup button.
     advanceLevel();
   };
 }
@@ -461,11 +663,12 @@ function endGame() {
   $("finalView").classList.remove("hidden");
   const finalTimeSpent = GAME.game.timer_seconds - state.timeLeft;
   el.finalScore().textContent = state.score;
-  el.finalTime().textContent = formatTime(state.timeLeft);
+  el.finalTime().textContent = formatTime(finalTimeSpent);
 
   const team = localStorage.getItem("team_name") || "Unknown";
-  $("finalTeamName").textContent = team;
-  $("finalMembers").textContent = ""; 
+  if($("finalTeamName")) $("finalTeamName").textContent = team;
+  const members = JSON.parse(localStorage.getItem("team_members") || "[]");
+  if($("finalMembers")) $("finalMembers").textContent = members.join(", "); 
 
   if (el.btnCertificate()) el.btnCertificate().onclick = () => window.print();
 
@@ -475,14 +678,19 @@ function endGame() {
     body: JSON.stringify({ team: team, score: state.score, time_spent: finalTimeSpent })
   })
   .then(r => r.json())
-  .then(data => renderLeaderboard(data.leaderboard));
+  .then(data => {
+      renderLeaderboard(data.leaderboard);
+      setInterval(() => {
+          fetch('/leaderboard').then(r=>r.json()).then(renderLeaderboard);
+      }, 3000);
+  });
 }
 
 function renderLeaderboard(list) {
   const box = document.getElementById("podiumBox");
+  if (!box) return;
   box.innerHTML = "";
   
-  // Sort just in case server didn't
   list.sort((a,b) => b.score - a.score || a.time_spent - b.time_spent);
   const top3 = list.slice(0,3);
   
@@ -491,32 +699,32 @@ function renderLeaderboard(list) {
       return;
   }
 
-  // Render Podium HTML
-  // Order: 2nd, 1st, 3rd for visual podium shape
   const order = [1, 0, 2];
   order.forEach(i => {
       if (!top3[i]) return;
       const entry = top3[i];
       const rank = i + 1;
+      const min = Math.floor(entry.time_spent / 60);
+      const sec = entry.time_spent % 60;
+      const timeStr = `${min}:${String(sec).padStart(2,'0')}`;
+
       const div = document.createElement("div");
       div.className = `podium-step podium-${rank}`;
       div.innerHTML = `
         <div class="podium-rank">${rank}</div>
         <div class="podium-team">${entry.team}</div>
-        <div class="podium-score">${entry.score} pts</div>
+        <div class="podium-score">${entry.score} pts<br><small>${timeStr}</small></div>
       `;
       box.appendChild(div);
   });
 }
 
-// Simple Fireworks
 function launchFireworks() {
   const canvas = document.getElementById("fireworksCanvas");
   if(!canvas) return;
   const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  
   const particles = [];
   function createParticle(x, y) {
     const count = 30;
@@ -530,9 +738,7 @@ function launchFireworks() {
       });
     }
   }
-  
   createParticle(window.innerWidth/2, window.innerHeight/2);
-  
   function update() {
     ctx.clearRect(0,0, canvas.width, canvas.height);
     for(let i=0; i<particles.length; i++) {

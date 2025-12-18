@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="game-page">
+<body class="page-full">
 
   <main class="game-wrap">
     <div class="team-banner" id="teamBanner">TEAM: ...</div>
@@ -16,18 +16,20 @@
     <section class="card big-card rules-card">
       <h1 class="big-title">GAME RULES</h1>
 
-      <div class="rules-box" id="rulesBox"></div>
+      <div class="rules-container" id="rulesBox">
+        </div>
 
       <div class="agree-row">
         <label class="agree-label">
           <input type="checkbox" id="agreeCheck" />
-          I read the rules and agree (for fun 😄)
+          <span class="checkmark"></span>
+          We understand the rules and pledge fair play.
         </label>
       </div>
 
       <div class="nav-row">
         <button class="btn-rect" onclick="window.location.href='/team'">BACK</button>
-        <button class="btn-rect" id="startGame" disabled>START</button>
+        <button class="btn-rect" id="startGame" disabled>START GAME</button>
       </div>
     </section>
   </main>
@@ -45,15 +47,62 @@
       const rules = d?.game?.rules;
       if (!rules) return;
 
-      const html = [];
-      html.push(`<div class="rules-section"><div class="rules-title">Time</div><div>${rules.time_minutes} minutes</div></div>`);
-      html.push(`<div class="rules-section"><div class="rules-title">Scoring</div><ul>${(rules.scoring||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
-      html.push(`<div class="rules-section"><div class="rules-title">Lifelines</div><ul>${(rules.lifelines||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
-      html.push(`<div class="rules-section"><div class="rules-title">Fair play</div><ul>${(rules.fairplay||[]).map(x=>`<li>${x}</li>`).join("")}</ul></div>`);
-      rulesBox.innerHTML = html.join("");
+      // Icons for sections
+      const icons = {
+        "Time": "⏱️",
+        "Scoring": "🏆",
+        "Lifelines": "🆘",
+        "Fair play": "🤝"
+      };
+
+      let html = `<div class="rules-grid">`;
+
+      // 1. Time
+      html += `
+        <div class="rules-card-item">
+          <div class="rules-header">${icons["Time"]} Time Limit</div>
+          <div class="rules-text">You have <b>${rules.time_minutes} minutes</b> to complete the challenge.</div>
+        </div>
+      `;
+
+      // 2. Scoring
+      html += `
+        <div class="rules-card-item">
+          <div class="rules-header">${icons["Scoring"]} Scoring</div>
+          <ul class="rules-list">
+            ${(rules.scoring||[]).map(x => `<li>${x}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      // 3. Lifelines
+      html += `
+        <div class="rules-card-item">
+          <div class="rules-header">${icons["Lifelines"]} Lifelines</div>
+          <ul class="rules-list">
+            ${(rules.lifelines||[]).map(x => `<li>${x}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      // 4. Fair Play
+      html += `
+        <div class="rules-card-item">
+          <div class="rules-header">${icons["Fair play"]} Fair Play</div>
+          <ul class="rules-list">
+            ${(rules.fairplay||[]).map(x => `<li>${x}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      html += `</div>`; // End Grid
+      rulesBox.innerHTML = html;
     });
 
-    agreeCheck.addEventListener("change", () => startGame.disabled = !agreeCheck.checked);
+    agreeCheck.addEventListener("change", () => {
+      startGame.disabled = !agreeCheck.checked;
+      startGame.classList.toggle("btn-primary", agreeCheck.checked);
+    });
 
     startGame.addEventListener("click", () => {
       localStorage.setItem("rules_accepted", "true");

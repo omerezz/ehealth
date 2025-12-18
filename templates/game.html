@@ -62,7 +62,6 @@
       <section class="card big-card final-card" id="certificateArea">
         <div class="trophy">🏆</div>
         <h1 class="big-title">CONGRATULATIONS!</h1>
-        <div class="final-sub">You have mastered the pathway.</div>
 
         <div class="final-team-section">
           <div class="final-team-icon">🏥</div>
@@ -75,11 +74,10 @@
           <div class="final-stat"><span class="final-k">TIME SPENT</span><span class="final-v" id="finalTime">00:00:00</span></div>
         </div>
 
-        <div class="podium-container" id="podiumBox">
-          </div>
+        <div class="podium-container" id="podiumBox"></div>
 
         <div class="nav-row no-print" style="justify-content:center; flex-wrap:wrap; gap:20px;">
-          <button class="btn-pill btn-primary" id="btnCertificate">DOWNLOAD CERTIFICATE</button>
+          <button class="btn-rect" onclick="window.location.href='/'">BACK TO HOME</button>
         </div>
       </section>
     </section>
@@ -91,8 +89,8 @@
       <h2 class="modal-title">HINTS</h2>
       <div id="hintUnlockView">
         <div class="hint-grid">
-          <button class="hint-tile" id="hint25"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">20 POINTS</div></button>
-          <button class="hint-tile" id="hint50"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">25 POINTS</div></button>
+          <button class="hint-tile" id="hint25"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">25 POINTS</div></button>
+          <button class="hint-tile" id="hint50"><div class="hint-tile-top">UNLOCK</div><div class="hint-tile-bottom">50 POINTS</div></button>
         </div>
         <div class="hint-meta">Remaining hints: <span id="hintRemaining">4</span></div>
       </div>
